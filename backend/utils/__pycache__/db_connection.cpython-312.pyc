@@ -1,0 +1,81 @@
+function loadStudentsData() {
+    studentsData = [
+        {
+            id: 1,
+            name: 'Ganesh',
+            rollNo: '101ME',
+            department: 'Computer Science',
+            semester: 3,
+            riskLevel: 'high',
+            riskScore: 78,
+            factors: ['Low Attendance', 'Poor Grades', 'Financial Issues'],
+            lastContact: '2024-01-15',
+            email: 'john.doe@university.edu',
+            phone: '+1234567890',
+            gpa: 2.1,
+            attendance: 65
+        },
+        {
+            id: 2,
+            name: 'Chanthrika',
+            rollNo: '205CS',
+            department: 'Computer Science',
+            semester: 4,
+            riskLevel: 'medium',
+            riskScore: 45,
+            factors: ['Stress', 'Part-time Job'],
+            lastContact: '2024-01-12',
+            email: 'jane.smith@university.edu',
+            phone: '+1234567891',
+            gpa: 3.2,
+            attendance: 78
+        },
+        {
+            id: 3,
+            name: 'Shirivanth',
+            rollNo: '301EE',
+            department: 'Electrical Engineering',
+            semester: 6,
+            riskLevel: 'low',
+            riskScore: 25,
+            factors: [],
+            lastContact: '2024-01-10',
+            email: 'bob.johnson@university.edu',
+            phone: '+1234567892',
+            gpa: 3.8,
+            attendance: 92
+        },
+        {
+            id: 4,
+            name: 'Shanjana',
+            rollNo: '102CE',
+            department: 'Civil Engineering',
+            semester: 2,
+            riskLevel: 'high',
+            riskScore: 82,
+            factors: ['Very Low Attendance', 'Multiple Backlogs', 'Mental Health'],
+            lastContact: '2024-01-14',
+            email: 'alice.brown@university.edu',
+            phone: '+1234567893',
+            gpa: 1.8,
+            attendance: 45
+        },
+        {
+            id: 5,
+            name: 'Charlie Wilson',
+            rollNo: '403IT',
+            department: 'Information Technology',
+            semester: 8,
+            riskLevel: 'medium',
+            riskScore: 55,
+            factors: ['Job Pressure', 'Final Year Stress'],
+            lastContact: '2024-01-11',
+            email: 'charlie.wilson@university.edu',
+            phone: '+1234567894',
+            gpa: 2.9,
+            attendance: 72
+        }
+    ];
+
+    filteredStudents = [...studentsData];
+}

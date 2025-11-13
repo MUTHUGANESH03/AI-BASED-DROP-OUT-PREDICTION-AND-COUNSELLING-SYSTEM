@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dropout Prediction & Counseling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div id="app" class="relative animated-ui">
+        <!-- Main Navigation Bar -->
+        <nav class="bg-white shadow-lg py-4 px-6 flex justify-between items-center sticky top-0 z-50">
+            <div class="flex items-center space-x-4">
+                <a href="#home" onclick="showPage('home')" class="text-xl md:text-2xl font-bold text-blue-600">EduTrack
+                    AI</a>
+                <!-- Notification Bell -->
+
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#home" onclick="showPage('home')"
+                    class="text-gray-600 hover:text-blue-600 transition-colors duration-300">Home</a>
+                <a href="#about" onclick="showPage('about')"
+                    class="text-gray-600 hover:text-blue-600 transition-colors duration-300">About</a>
+                <a href="#analytics" onclick="showPage('analytics')"
+                    class="text-gray-600 hover:text-blue-600 transition-colors duration-300">Analytics</a>
+                <a href="#student-login" onclick="showPage('student-login')"
+                    class="text-gray-600 hover:text-blue-600 transition-colors duration-300">Student Login</a>
+                <a href="#counselor-login" onclick="showPage('counselor-login')"
+                    class="text-gray-600 hover:text-blue-600 transition-colors duration-300">Counselor Login</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-toggle" class="text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg px-4 pb-4">
+            <a href="#home" onclick="showPage('home')" class="block py-2 text-gray-600 hover:text-blue-600">Home</a>
+            <a href="#about" onclick="showPage('about')" class="block py-2 text-gray-600 hover:text-blue-600">About</a>
+            <a href="#analytics" onclick="showPage('analytics')"
+                class="block py-2 text-gray-600 hover:text-blue-600">Analytics</a>
+            <a href="#student-login" onclick="showPage('student-login')"
+                class="block py-2 text-gray-600 hover:text-blue-600">Student Login</a>
+            <a href="#counselor-login" onclick="showPage('counselor-login')"
+                class="block py-2 text-gray-600 hover:text-blue-600">Counselor Login</a>
+        </div>
+
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <header
+                class="bg-gradient-to-r from-blue-600 to-teal-500 text-white text-center py-20 px-6 rounded-b-3xl header-shine">
+                <!-- decorative animated blobs -->
+                <div class="header-blob header-blob-1" aria-hidden="true"></div>
+                <div class="header-blob header-blob-2" aria-hidden="true"></div>
+                <h1 class="text-3xl md:text-5xl font-extrabold mb-4">AI-powered Dropout Prediction & Counseling System
+                </h1>
+                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 opacity-90">Empowering educational institutions to
+                    proactively identify and support at-risk students, ensuring a brighter future for all.</p>
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+                    <button onclick="showPage('student-data-input')"
+                        class="bg-white text-blue-600 font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-300">Predict
+                        Risk</button>
+                    <button onclick="showPage('student-login')"
+                        class="bg-transparent border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white hover:text-blue-600 transition-colors duration-300">Student
+                        Login</button>
+                    <button onclick="showPage('counselor-login')"
+                        class="bg-transparent border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white hover:text-blue-600 transition-colors duration-300">Counselor
+                        Login</button>
+                </div>
+            </header>
+
+            <main class="container mx-auto py-12 px-6">
+                <!-- Live Statistics Section -->
+                <section class="mb-12">
+                    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Live System Statistics</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="stat-card feature-block bg-1 text-left p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm uppercase opacity-90">Total Students</div>
+                                    <div class="stat-value text-3xl font-bold" id="total-students">1,247</div>
+                                    <div class="text-xs opacity-80 mt-1">↑ 5.2% this month</div>
+                                </div>
+                                <div class="icon">🎓</div>
+                            </div>
+                        </div>
+                        <div class="stat-card feature-block bg-3 text-left p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm uppercase opacity-90">High Risk</div>
+                                    <div class="stat-value text-3xl font-bold" id="high-risk-count">89</div>
+                                    <div class="text-xs opacity-80 mt-1">↓ 12% this week</div>
+                                </div>
+                                <div class="icon">⚠️</div>
+                            </div>
+                        </div>
+                        <div class="stat-card feature-block bg-2 text-left p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm uppercase opacity-90">Success Rate</div>
+                                    <div class="stat-value text-3xl font-bold" id="success-rate">87.3%</div>
+                                    <div class="text-xs opacity-80 mt-1">↑ 3.1% improvement</div>
+                                </div>
+                                <div class="icon">✅</div>
+                            </div>
+                        </div>
+                        <div class="stat-card feature-block bg-1 text-left p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm uppercase opacity-90">Active Interventions</div>
+                                    <div class="stat-value text-3xl font-bold" id="interventions">156</div>
+                                    <div class="text-xs opacity-80 mt-1">24 this week</div>
+                                </div>
+                                <div class="icon">🩺</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div
+                        class="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <!-- <img src="https://placehold.co/100x100/A0E0FF/0066CC?text=AI" alt="AI Icon" class="mx-auto mb-4"> -->
+                        <img src="icons/pa.png" alt="AI Icon" class="mx-auto mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Predictive Analytics</h3>
+                        <p class="text-gray-600">Our advanced AI model analyzes academic, behavioral, and demographic
+                            data to forecast dropout risk with high accuracy.</p>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <!-- <img src="https://placehold.co/100x100/C0F0C0/008000?text=Counseling" alt="Counseling Icon" class="mx-auto mb-4"> -->
+                        <img src="icons/pc.png" alt="Counseling Icon" class="mx-auto mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Personalized Counseling</h3>
+                        <p class="text-gray-600">Connect with professional counselors and access personalized support
+                            plans, academic tips, and mental health resources.</p>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <!-- <img src="https://placehold.co/100x100/FFDDAA/CC6600?text=Dashboard" alt="Dashboard Icon" class="mx-auto mb-4"> -->
+                        <img src="icons/ai.png" alt="Dashboard Icon" class="mx-auto mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Actionable Insights</h3>
+                        <p class="text-gray-600">Counselors and administrators get real-time dashboards and reports to
+                            identify and assist at-risk student groups efficiently.</p>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- New Analytics Page -->
+        <div id="analytics" class="page py-12 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-blue-600 mb-8">Advanced Analytics Dashboard</h2>
+
+                <!-- Time Range Selector -->
+                <div class="bg-white p-6 rounded-2xl shadow-md mb-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Analytics Overview</h3>
+                        <div class="flex items-center space-x-4">
+                            <select id="time-range"
+                                class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 3 months</option>
+                                <option value="365">Last year</option>
+                            </select>
+                            <button onclick="exportAnalytics()"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Trend Analysis Chart -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Risk Trend Analysis</h3>
+                        <canvas id="trendChart" height="300"></canvas>
+                    </div>
+
+                    <!-- Department Comparison -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Department Risk Comparison</h3>
+                        <canvas id="departmentChart" height="300"></canvas>
+                    </div>
+
+                    <!-- Intervention Success Rate -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Intervention Success Rate</h3>
+                        <canvas id="interventionChart" height="300"></canvas>
+                    </div>
+
+                    <!-- Predictive Accuracy -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">AI Model Accuracy</h3>
+                        <canvas id="accuracyChart" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Key Insights & Recommendations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h4 class="font-semibold text-blue-800">Attendance Impact</h4>
+                            <p class="text-sm text-blue-700 mt-2">Students with <75% attendance are 3.2x more likely to
+                                    drop out</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                            <h4 class="font-semibold text-green-800">Early Intervention</h4>
+                            <p class="text-sm text-green-700 mt-2">85% success rate when intervention starts within
+                                first semester</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                            <h4 class="font-semibold text-yellow-800">Financial Factors</h4>
+                            <p class="text-sm text-yellow-700 mt-2">Fee payment delays correlate with 40% higher dropout
+                                risk</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about" class="page max-w-5xl mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-2xl shadow-md about-animated">
+                <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">About EduTrack AI <span
+                        class="icon-bounce">✨</span></h2>
+                <div class="prose max-w-none about-features">
+                    <p class="text-gray-700 leading-relaxed mb-6 about-feature">At EduTrack AI, our mission is to
+                        harness the power of artificial intelligence to combat student dropout rates and foster a more
+                        supportive and engaging educational environment. Our platform is a comprehensive solution
+                        designed for both students and educational institutions. We believe that every student deserves
+                        the opportunity to succeed, and our technology is built to make that a reality.</p>
+
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">How It Works</h3>
+
+                    <p class="text-gray-700 leading-relaxed mb-6">
+                        Our system leverages a sophisticated AI model trained on diverse academic and behavioral data
+                        points. By analyzing key factors such as <b>attendance records</b>, <b>test scores</b>,
+                        <b>backlog history</b>, and <b>fee payment patterns</b>, it proactively identifies students at
+                        risk of dropping out. More than just flagging potential issues, the system empowers institutions
+                        to take timely action and guide students toward the right solutions.
+                    </p>
+
+
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Key Features</h3>
+                    <ul class="list-disc list-inside space-y-3 text-gray-700">
+                        <li><b>Predictive Analytics:</b> Leverage data-driven insights to identify student performance
+                            trends and potential risks early. This empowers institutions to shift from a reactive
+                            approach to a <b>proactive</b> support model.</li>
+
+                        <li><b>Personalized Interventions:</b> Provide students with tailored support—whether through
+                            professional counseling, study group suggestions, or academic tips—ensuring that every
+                            learner receives guidance specific to their needs.</li>
+
+                        <li><b>Actionable Dashboards:</b> Equip counselors and administrators with intuitive dashboards
+                            that visualize risk patterns across departments and highlight at-risk students, helping them
+                            prioritize efforts and allocate resources more effectively.</li>
+
+                        <li><b>Privacy & Security:</b> Protect student information with strict confidentiality and
+                            compliance with privacy regulations, ensuring a secure environment where learners feel
+                            supported and safe.</li>
+                    </ul>
+
+
+                    <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">Our Vision</h3>
+                    <p class="text-gray-700 leading-relaxed">By bridging the gap between data insights and
+                        human-centered counseling, EduTrack AI aims to empower students, support educators, and
+                        ultimately, help more students achieve their academic goals and complete their education.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Login/Register Page -->
+        <div id="student-login" class="page max-w-md mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-2xl shadow-md">
+                <h2 id="student-form-title" class="text-3xl font-bold text-center text-blue-600 mb-6">Student Login</h2>
+                <form id="login-form">
+                    <div class="mb-4">
+                        <label for="student-id" class="block text-gray-700 font-medium mb-2">Roll No.</label>
+                        <input type="text" id="student-id"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your roll number" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="student-password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <input type="password" id="student-password"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300">Login</button>
+                </form>
+                <form id="register-form" class="hidden">
+                    <div class="mb-4">
+                        <label for="reg-name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+                        <input type="text" id="reg-name"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your full name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-rollno" class="block text-gray-700 font-medium mb-2">Roll No.</label>
+                        <input type="text" id="reg-rollno"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your roll number" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-dept" class="block text-gray-700 font-medium mb-2">Department</label>
+                        <select id="reg-dept"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required>
+                            <option value="">Select Department</option>
+                            <option value="cs">Computer Science</option>
+                            <option value="ee">Electrical Engineering</option>
+                            <option value="me">Mechanical Engineering</option>
+                            <option value="ce">Civil Engineering</option>
+                            <option value="it">Information Technology</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="reg-password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <input type="password" id="reg-password"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Create a password" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-teal-500 text-white font-bold py-3 rounded-lg hover:bg-teal-600 transition-colors duration-300">Register</button>
+                </form>
+                <p class="text-center text-gray-500 mt-6">
+                    <span id="toggle-text">Don't have an account? </span>
+                    <a href="#" id="toggle-link" class="text-blue-600 hover:underline">Register here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Enhanced Student Data Input Page -->
+        <div id="student-data-input" class="page max-w-4xl mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-2xl shadow-md">
+                <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Enhanced Student Assessment</h2>
+
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Assessment Progress</span>
+                        <span id="progress-text">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <form id="data-input-form">
+                    <!-- Academic Information -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Academic Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="attendance-input" class="block text-gray-700 font-medium mb-2">Attendance
+                                    Percentage (%)</label>
+                                <input type="number" id="attendance-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    min="0" max="100" required>
+                                <div class="text-sm text-gray-500 mt-1">Current semester attendance</div>
+                            </div>
+                            <div>
+                                <label for="test-scores-input" class="block text-gray-700 font-medium mb-2">Average Test
+                                    Scores (%)</label>
+                                <input type="number" id="test-scores-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    min="0" max="100" required>
+                                <div class="text-sm text-gray-500 mt-1">Average of all assessments</div>
+                            </div>
+                            <div>
+                                <label for="backlogs-input" class="block text-gray-700 font-medium mb-2">Number of
+                                    Backlog Attempts</label>
+                                <input type="number" id="backlogs-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    min="0" required>
+                                <div class="text-sm text-gray-500 mt-1">Total failed subjects</div>
+                            </div>
+                            <div>
+                                <label for="gpa-input" class="block text-gray-700 font-medium mb-2">Current GPA</label>
+                                <input type="number" id="gpa-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    min="0" max="10" step="0.1" required>
+                                <div class="text-sm text-gray-500 mt-1">Grade Point Average</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial & Administrative -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Financial & Administrative</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="fee-status-input" class="block text-gray-700 font-medium mb-2">Fee Payment
+                                    Status</label>
+                                <select id="fee-status-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Status</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="overdue">Overdue</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="scholarship-input" class="block text-gray-700 font-medium mb-2">Scholarship
+                                    Status</label>
+                                <select id="scholarship-input"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Status</option>
+                                    <option value="none">No Scholarship</option>
+                                    <option value="partial">Partial Scholarship</option>
+                                    <option value="full">Full Scholarship</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal & Social Factors -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Personal & Social Factors</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="family-income" class="block text-gray-700 font-medium mb-2">Family Income
+                                    Level</label>
+                                <select id="family-income"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Level</option>
+                                    <option value="low">Low Income</option>
+                                    <option value="middle">Middle Income</option>
+                                    <option value="high">High Income</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="distance-home" class="block text-gray-700 font-medium mb-2">Distance from
+                                    Home (km)</label>
+                                <input type="number" id="distance-home"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    min="0" required>
+                            </div>
+                            <div>
+                                <label for="part-time-job" class="block text-gray-700 font-medium mb-2">Part-time
+                                    Job</label>
+                                <select id="part-time-job"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Option</option>
+                                    <option value="none">No Job</option>
+                                    <option value="part-time">Part-time Job</option>
+                                    <option value="full-time">Full-time Job</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="extracurricular"
+                                    class="block text-gray-700 font-medium mb-2">Extracurricular Activities</label>
+                                <select id="extracurricular"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Level</option>
+                                    <option value="none">None</option>
+                                    <option value="low">Low Participation</option>
+                                    <option value="medium">Medium Participation</option>
+                                    <option value="high">High Participation</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health & Wellbeing -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Health & Wellbeing</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="mental-health" class="block text-gray-700 font-medium mb-2">Mental Health
+                                    Status</label>
+                                <select id="mental-health"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                    <option value="">Select Status</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="good">Good</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="poor">Poor</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="stress-level" class="block text-gray-700 font-medium mb-2">Stress Level
+                                    (1-10)</label>
+                                <input type="range" id="stress-level" class="w-full" min="1" max="10" value="5"
+                                    oninput="updateStressValue(this.value)">
+                                <div class="flex justify-between text-sm text-gray-500">
+                                    <span>Low</span>
+                                    <span id="stress-value">5</span>
+                                    <span>High</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="my-8 text-center text-gray-500 relative">
+                        <span class="bg-white px-4">OR</span>
+                        <div class="absolute inset-y-1/2 left-0 w-full h-px bg-gray-300 -z-10"></div>
+                    </div>
+
+                    <!-- Enhanced File Upload -->
+                    <div class="text-center border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer hover:border-blue-500 transition-colors duration-300"
+                        onclick="document.getElementById('file-input').click()">
+                        <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v8">
+                            </path>
+                        </svg>
+                        <p class="text-gray-500 font-medium">Drag & drop your CSV/Excel file here or click to browse</p>
+                        <p class="text-sm text-gray-400 mt-2">Supports CSV, XLSX files up to 10MB</p>
+                        <input type="file" id="file-input" class="hidden" accept=".csv, .xlsx"
+                            onchange="handleFileUpload(this)">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 mt-8">
+                        <span id="submit-text">Predict My Risk</span>
+                        <div id="loading-spinner" class="hidden inline-block ml-2">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Enhanced Student Dashboard Page -->
+        <div id="student-dashboard" class="page max-w-6xl mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-2xl shadow-md">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-blue-600">Your Prediction Dashboard</h2>
+                    <button onclick="generateStudentReport()"
+                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                        Download Report
+                    </button>
+                </div>
+
+                <!-- Risk Status Card -->
+                <div class="bg-gradient-to-r from-blue-50 to-teal-50 p-6 rounded-xl mb-8 border border-blue-200">
+                    <div class="flex justify-center items-center mb-4">
+                        <span class="text-xl font-bold mr-4">Risk Status:</span>
+                        <span id="risk-status" class="text-2xl font-bold text-white px-6 py-2 rounded-full"></span>
+                    </div>
+                    <div class="text-center">
+                        <div id="risk-percentage" class="text-4xl font-bold text-gray-800 mb-2">0%</div>
+                        <div class="text-gray-600">Dropout Risk Probability</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Risk Factors Chart -->
+                    <div class="bg-gray-50 p-4 rounded-xl shadow-inner max-h-[400px] overflow-y-auto">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Risk Factor Analysis</h3>
+                        <canvas id="riskChart" class="w-full h-40"></canvas>
+                        <div id="risk-factors-list" class="mt-3 space-y-1 text-sm text-gray-700">
+                            <!-- Risk factors will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Personalized Recommendations -->
+                    <div
+                        class="bg-gray-50 p-4 rounded-xl shadow-inner max-h-[400px] overflow-y-auto flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Personalized Action Plan</h3>
+                            <div id="recommendations-list" class="space-y-2 text-sm text-gray-700">
+                                <!-- Recommendations will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <h4 class="font-semibold text-gray-700 mb-2 text-sm">Quick Actions</h4>
+                            <div class="space-y-2">
+                                <button onclick="scheduleAppointment()"
+                                    class="w-full bg-blue-600 text-white py-1.5 px-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 text-sm">
+                                    Schedule Counseling Session
+                                </button>
+                                <button onclick="joinStudyGroup()"
+                                    class="w-full bg-teal-600 text-white py-1.5 px-3 rounded-lg hover:bg-teal-700 transition-colors duration-300 text-sm">
+                                    Join Study Group
+                                </button>
+                                <button onclick="accessResources()"
+                                    class="w-full bg-purple-600 text-white py-1.5 px-3 rounded-lg hover:bg-purple-700 transition-colors duration-300 text-sm">
+                                    Access Learning Resources
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Progress Tracking -->
+                <div class="mt-8 bg-gray-50 p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Progress Tracking</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600" id="attendance-progress">0%</div>
+                            <div class="text-gray-600">Attendance Goal</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 0%" id="attendance-bar"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="grade-progress">0%</div>
+                            <div class="text-gray-600">Grade Goal</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 0%" id="grade-bar"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600" id="overall-progress">0%</div>
+                            <div class="text-gray-600">Overall Progress</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: 0%" id="overall-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Counselor Login Page -->
+        <div id="counselor-login" class="page max-w-md mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-2xl shadow-md">
+                <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Counselor Login</h2>
+                <form id="counselor-form">
+                    <div class="mb-4">
+                        <label for="counselor-id" class="block text-gray-700 font-medium mb-2">Counselor ID</label>
+                        <input type="text" id="counselor-id"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your ID" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="counselor-password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <input type="password" id="counselor-password"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Enhanced Counselor Dashboard Page -->
+        <div id="counselor-dashboard" class="page py-12 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-blue-600">Counselor Dashboard</h2>
+                    <div class="flex space-x-4">
+                        <button onclick="openAddStudentModal()"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                            Add Student
+                        </button>
+                        <button onclick="sendBulkNotifications()"
+                            class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors duration-300">
+                            Send Notifications
+                        </button>
+                        <button onclick="exportCounselorReport()"
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                            Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Enhanced Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-4xl font-bold text-blue-600 mb-2" id="counselor-total-students">1,500</div>
+                        <h3 class="text-lg font-semibold text-gray-600">Total Students</h3>
+                        <div class="text-sm text-green-500 mt-1">↑ 3.2% this month</div>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-4xl font-bold text-red-500 mb-2" id="counselor-high-risk">150</div>
+                        <h3 class="text-lg font-semibold text-gray-600">High Risk Students</h3>
+                        <div class="text-sm text-red-500 mt-1">↓ 8.1% this week</div>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-4xl font-bold text-teal-500 mb-2" id="counselor-sessions">24</div>
+                        <h3 class="text-lg font-semibold text-gray-600">Active Sessions</h3>
+                        <div class="text-sm text-teal-500 mt-1">12 scheduled today</div>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-4xl font-bold text-purple-500 mb-2" id="counselor-success-rate">87%</div>
+                        <h3 class="text-lg font-semibold text-gray-600">Success Rate</h3>
+                        <div class="text-sm text-purple-500 mt-1">↑ 5.3% improvement</div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Risk Distribution and Filters -->
+                <div class="bg-white p-6 rounded-2xl shadow-md mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Risk Distribution & Analytics</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <canvas id="counselorRiskChart"></canvas>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-700 mb-4">Advanced Filters</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="dept-filter"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                                    <select id="dept-filter"
+                                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="all">All Departments</option>
+                                        <option value="cs">Computer Science</option>
+                                        <option value="ee">Electrical Engineering</option>
+                                        <option value="me">Mechanical Engineering</option>
+                                        <option value="ce">Civil Engineering</option>
+                                        <option value="it">Information Technology</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="risk-filter" class="block text-sm font-medium text-gray-700 mb-2">Risk
+                                        Level</label>
+                                    <select id="risk-filter"
+                                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="all">All Risk Levels</option>
+                                        <option value="high">High Risk (>70%)</option>
+                                        <option value="medium">Medium Risk (30-70%)</option>
+                                        <option value="low">Low Risk (<30%)< /option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="semester-filter"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Semester</label>
+                                    <select id="semester-filter"
+                                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="all">All Semesters</option>
+                                        <option value="1">1st Semester</option>
+                                        <option value="2">2nd Semester</option>
+                                        <option value="3">3rd Semester</option>
+                                        <option value="4">4th Semester</option>
+                                        <option value="5">5th Semester</option>
+                                        <option value="6">6th Semester</option>
+                                        <option value="7">7th Semester</option>
+                                        <option value="8">8th Semester</option>
+                                    </select>
+                                </div>
+                                <button onclick="applyFilters()"
+                                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                                    Apply Filters
+                                </button>
+                                <button onclick="resetFilters()"
+                                    class="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
+                                    Reset Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Student List with Search and Pagination -->
+                <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h3 class="text-xl font-bold text-gray-800">At-Risk Students Management</h3>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="text" id="student-search" placeholder="Search students..."
+                                class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <select id="sort-by"
+                                class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="risk-desc">Risk (High to Low)</option>
+                                <option value="risk-asc">Risk (Low to High)</option>
+                                <option value="name-asc">Name (A-Z)</option>
+                                <option value="name-desc">Name (Z-A)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Student Info</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Risk Level</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Key Factors</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Last Contact</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Students will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-700">
+                            Showing <span id="showing-start">1</span> to <span id="showing-end">10</span> of <span
+                                id="total-students">150</span> students
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prev-page" onclick="changePage(-1)"
+                                class="px-3 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                            <span id="page-numbers" class="flex space-x-1">
+                                <!-- Page numbers will be populated here -->
+                            </span>
+                            <button id="next-page" onclick="changePage(1)"
+                                class="px-3 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Message Modal -->
+        <div id="messageModal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-lg font-semibold text-gray-800">Notification</h3>
+                    <span id="closeModal"
+                        class="close-button text-gray-400 hover:text-gray-600 cursor-pointer">&times;</span>
+                </div>
+                <div id="modal-body">
+                    <p id="modalMessage" class="text-gray-700 text-base"></p>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button id="modal-cancel" onclick="closeModal()"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-300">Cancel</button>
+                    <button id="modal-confirm" onclick="closeModal()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Student Modal -->
+        <div id="addStudentModal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Add Student</h3>
+                    <span onclick="closeAddStudentModal()"
+                        class="close-button text-gray-400 hover:text-gray-600 cursor-pointer">&times;</span>
+                </div>
+                <form id="add-student-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input id="add-name" class="w-full px-3 py-2 border rounded-lg" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Roll No</label>
+                            <input id="add-roll" class="w-full px-3 py-2 border rounded-lg" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Department</label>
+                            <select id="add-dept" class="w-full px-3 py-2 border rounded-lg">
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Semester</label>
+                            <select id="add-semester" class="w-full px-3 py-2 border rounded-lg">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input id="add-email" type="email" class="w-full px-3 py-2 border rounded-lg" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Phone</label>
+                            <input id="add-phone" class="w-full px-3 py-2 border rounded-lg" />
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Academic Performance (GPA)</label>
+                            <input id="add-gpa" type="number" step="0.1" min="0" max="10"
+                                class="w-full px-3 py-2 border rounded-lg" />
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <button type="button" onclick="closeAddStudentModal()"
+                            class="px-4 py-2 border rounded-lg">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Add Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Student Profile Modal -->
+        <div id="studentProfileModal" class="modal">
+            <div class="modal-content max-w-4xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Student Profile</h3>
+                    <span onclick="closeStudentProfile()"
+                        class="close-button text-gray-400 hover:text-gray-600 cursor-pointer text-2xl">&times;</span>
+                </div>
+                <div id="student-profile-content">
+                    <!-- Student profile content will be populated here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Chatbot widget -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-50">
+        <button id="chat-toggle" aria-label="Open chat"
+            class="bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform">
+            <!-- chat icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4-.85L3 20l1.15-3.85A8.987 8.987 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+        </button>
+
+        <div id="chat-panel" class="hidden w-80 h-96 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+            <div class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between">
+                <div class="font-semibold">Chatbot</div>
+                <button id="chat-close" aria-label="Close chat"
+                    class="text-white opacity-90 hover:opacity-100">✕</button>
+            </div>
+            <div id="chat-messages" class="flex-1 p-3 overflow-y-auto text-sm space-y-3 bg-gray-50"></div>
+            <form id="chat-form" class="p-3 border-t bg-white">
+                <div class="flex items-center gap-2">
+                    <input id="chat-input" type="text" placeholder="Type your message..."
+                        class="flex-1 px-3 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
